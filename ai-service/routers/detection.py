@@ -2,8 +2,11 @@
 
 FIXED: Updated to use spec-based risk scoring algorithm
 FIXED: Added comprehensive debug logging for verification
+FIXED: Added numpy serialization to fix JSON encoding issues
 """
 import base64
+import json
+import numpy as np
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from pydantic import BaseModel
 from typing import Optional
@@ -18,6 +21,54 @@ class DetectionRequest(BaseModel):
     frame: Optional[str] = None  # base64 encoded image
     source: Optional[str] = "mobile"
     zone_id: Optional[str] = None
+
+
+def _json_serializer(obj):
+    """Custom JSON serializer for numpy types and other non-serializable objects."""
+    if isinstance(obj, (np.integer, np.int64, np.int32)):
+        return int(obj)
+    elif isinstance(obj, (np.floating, np.float64, np.float32)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif hasattr(obj, '__dict__'):
+        return obj.__dict__
+    else:
+        return str(obj)
+
+
+def serialize_for_json(obj):
+    """Recursively convert numpy types to Python native types for JSON serialization.
+    Uses json.dumps/json.loads as the ultimate fallback to ensure all types are converted."""
+    # For maximum safety, convert to JSON and back to ensure all numpy types are handled
+    try:
+        import json
+        json_str = json.dumps(obj, default=_json_serializer)
+        return json.loads(json_str)
+    except (TypeError, ValueError) as e:
+        # If JSON fails, print for debugging
+        print(f"[WARN] JSON serialization failed: {e}, trying manual conversion")
+    
+    # Manual conversion as fallback - be very thorough
+    def deep_convert(item):
+        if item is None:
+            return None
+        elif isinstance(item, dict):
+            return {k: deep_convert(v) for k, v in item.items()}
+        elif isinstance(item, (list, tuple)):
+            return [deep_convert(x) for x in item]
+        elif isinstance(item, (np.integer, np.int64, np.int32)):
+            return int(item)
+        elif isinstance(item, (np.floating, np.float64, np.float32)):
+            return float(item)
+        elif isinstance(item, np.ndarray):
+            return item.tolist()
+        elif hasattr(item, '__dict__'):
+            return deep_convert(item.__dict__)
+        else:
+            return item
+    
+    return deep_convert(obj)
 
 
 @router.post("/detect")
@@ -87,7 +138,10 @@ async def detect(request: DetectionRequest):
         
         print(f"[DEBUG] Final result: people={result.get('people_count')}, vehicles={result.get('vehicle_count')}, risk={result.get('risk_score')}")
         
-        return {"success": True, "data": result}
+        # FIXED: Serialize result to convert numpy types to JSON-compatible types
+        serialized_result = serialize_for_json(result)
+        
+        return {"success": True, "data": serialized_result}
     except HTTPException:
         raise
     except Exception as e:

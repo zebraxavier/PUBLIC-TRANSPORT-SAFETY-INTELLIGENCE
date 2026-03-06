@@ -580,10 +580,10 @@ class TransportDetector:
                     "class": label,
                     "confidence": round(confidence, 3),
                     "bbox": [
-                        round(x1 / w, 3),
-                        round(y1 / h, 3),
-                        round(x2 / w, 3),
-                        round(y2 / h, 3)
+                        float(round(float(x1) / float(w), 3)),
+                        float(round(float(y1) / float(h), 3)),
+                        float(round(float(x2) / float(w), 3)),
+                        float(round(float(y2) / float(h), 3))
                     ],
                     "raw_bbox": [float(x1), float(y1), float(x2), float(y2)]
                 })
