@@ -1,0 +1,21 @@
+{
+  "settings_version": "0.0.6",
+  "datasets_dir": "E:\\PUBLIC TRANSPORT SAFETY INTELLIGENCE\\datasets",
+  "weights_dir": "weights",
+  "runs_dir": "runs",
+  "uuid": "40fe63d25bfc33765cd09bacd8ab77e68992761b7d0c083d5d084dc7e6904764",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "hub": true,
+  "mlflow": true,
+  "neptune": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}

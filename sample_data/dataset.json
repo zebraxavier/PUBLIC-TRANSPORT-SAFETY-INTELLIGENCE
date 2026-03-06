@@ -1,0 +1,183 @@
+{
+    "zones": [
+        {
+            "name": "Central Bus Terminal",
+            "type": "terminal",
+            "lat": 13.0827,
+            "lng": 80.2707,
+            "riskScore": 72,
+            "riskLevel": "danger",
+            "crowdDensity": 0.85,
+            "vehicleCount": 42,
+            "incidentCount": 12
+        },
+        {
+            "name": "Metro Station Alpha",
+            "type": "metro",
+            "lat": 13.0604,
+            "lng": 80.2496,
+            "riskScore": 48,
+            "riskLevel": "warning",
+            "crowdDensity": 0.55,
+            "vehicleCount": 18,
+            "incidentCount": 5
+        },
+        {
+            "name": "Airport Express Stop",
+            "type": "train_station",
+            "lat": 12.9941,
+            "lng": 80.1709,
+            "riskScore": 21,
+            "riskLevel": "safe",
+            "crowdDensity": 0.25,
+            "vehicleCount": 9,
+            "incidentCount": 1
+        },
+        {
+            "name": "Harbor Bus Stop",
+            "type": "bus_stop",
+            "lat": 13.0839,
+            "lng": 80.2890,
+            "riskScore": 61,
+            "riskLevel": "warning",
+            "crowdDensity": 0.67,
+            "vehicleCount": 22,
+            "incidentCount": 7
+        },
+        {
+            "name": "Outer Ring Highway",
+            "type": "highway",
+            "lat": 13.0181,
+            "lng": 80.2090,
+            "riskScore": 84,
+            "riskLevel": "danger",
+            "crowdDensity": 0.30,
+            "vehicleCount": 68,
+            "incidentCount": 18
+        },
+        {
+            "name": "Suburban Rail Junction",
+            "type": "train_station",
+            "lat": 13.1067,
+            "lng": 80.2928,
+            "riskScore": 38,
+            "riskLevel": "safe",
+            "crowdDensity": 0.42,
+            "vehicleCount": 14,
+            "incidentCount": 3
+        },
+        {
+            "name": "Market Bus Stop",
+            "type": "bus_stop",
+            "lat": 13.0504,
+            "lng": 80.2137,
+            "riskScore": 55,
+            "riskLevel": "warning",
+            "crowdDensity": 0.72,
+            "vehicleCount": 19,
+            "incidentCount": 6
+        },
+        {
+            "name": "Tech Park Shuttle",
+            "type": "bus_stop",
+            "lat": 12.9352,
+            "lng": 80.2161,
+            "riskScore": 18,
+            "riskLevel": "safe",
+            "crowdDensity": 0.20,
+            "vehicleCount": 7,
+            "incidentCount": 0
+        }
+    ],
+    "incident_types": [
+        "overcrowding",
+        "aggressive_traffic",
+        "congestion",
+        "suspicious_movement",
+        "accident",
+        "emergency"
+    ],
+    "severity_levels": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+    ],
+    "risk_thresholds": {
+        "safe": [
+            0,
+            34
+        ],
+        "warning": [
+            35,
+            64
+        ],
+        "danger": [
+            65,
+            100
+        ]
+    },
+    "simulation_scenarios": [
+        {
+            "id": "overcrowding",
+            "people": 88,
+            "vehicles": 8,
+            "crowd_density": 0.94,
+            "congestion": 0.72
+        },
+        {
+            "id": "traffic_surge",
+            "people": 22,
+            "vehicles": 52,
+            "crowd_density": 0.28,
+            "congestion": 0.91
+        },
+        {
+            "id": "suspicious_movement",
+            "people": 14,
+            "vehicles": 2,
+            "crowd_density": 0.25,
+            "congestion": 0.18
+        },
+        {
+            "id": "congestion",
+            "people": 55,
+            "vehicles": 35,
+            "crowd_density": 0.68,
+            "congestion": 0.79
+        }
+    ],
+    "risk_formula": "0.4 * crowd_density + 0.3 * vehicle_count_norm + 0.2 * congestion_level + 0.1 * incident_history_norm",
+    "api_endpoints": {
+        "auth": [
+            "POST /api/auth/login",
+            "POST /api/auth/demo",
+            "POST /api/auth/register"
+        ],
+        "vision": [
+            "POST /api/vision/detection",
+            "POST /api/vision/simulate"
+        ],
+        "incidents": [
+            "GET /api/incidents",
+            "GET /api/incidents/stats",
+            "GET /api/incidents/:id",
+            "PATCH /api/incidents/:id/status"
+        ],
+        "alerts": [
+            "GET /api/alerts",
+            "GET /api/alerts/stats",
+            "PATCH /api/alerts/:id/read",
+            "PATCH /api/alerts/read-all"
+        ],
+        "analytics": [
+            "GET /api/analytics/risk",
+            "GET /api/analytics/insights"
+        ],
+        "zones": [
+            "GET /api/zones",
+            "GET /api/zones/safety",
+            "GET /api/zones/:id"
+        ]
+    }
+}

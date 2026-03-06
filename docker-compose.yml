@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7-latest
+    container_name: ptsi-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: ptsi_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ptsi-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: ptsi-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ptsi-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
+  # Python AI Service
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: ptsi-ai-service
+    environment:
+      PORT: 8000
+      REDIS_URL: redis://redis:6379
+      CORS_ORIGINS: http://backend:5000,http://frontend:5173,http://localhost:5173
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ptsi-network
+    volumes:
+      - ./ai-service:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Node.js Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ptsi-backend
+    environment:
+      PORT: 5000
+      NODE_ENV: development
+      MONGODB_URI: mongodb://admin:admin@mongodb:27017/ptsi_db?authSource=admin
+      REDIS_URL: redis://redis:6379
+      AI_SERVICE_URL: http://ai-service:8000
+      JWT_SECRET: ptsi_secret_dev_key_change_in_prod
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ptsi-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ptsi-frontend
+    environment:
+      VITE_API_URL: http://localhost:5000/api
+      VITE_WS_URL: ws://localhost:5000/ws
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - ptsi-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  ptsi-network:
+    driver: bridge

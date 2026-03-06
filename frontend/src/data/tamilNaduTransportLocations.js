@@ -1,0 +1,58 @@
+export const tamilNaduTransportLocations = [
+    {
+        id: 'chennai_central',
+        name: 'Chennai Central Railway Station',
+        lat: 13.0827,
+        lng: 80.2707,
+        type: 'railway',
+    },
+    {
+        id: 'coimbatore_bus_terminal',
+        name: 'Coimbatore Omni Bus Stand',
+        lat: 11.0168,
+        lng: 76.9558,
+        type: 'bus',
+    },
+    {
+        id: 'madurai_junction',
+        name: 'Madurai Railway Junction',
+        lat: 9.9252,
+        lng: 78.1198,
+        type: 'railway',
+    },
+    {
+        id: 'trichy_central_busstand',
+        name: 'Tiruchirappalli Central Bus Stand',
+        lat: 10.7905,
+        lng: 78.7047,
+        type: 'bus',
+    },
+    {
+        id: 'salem_new_busstand',
+        name: 'Salem New Bus Stand',
+        lat: 11.6643,
+        lng: 78.1460,
+        type: 'bus',
+    },
+    {
+        id: 'tirunelveli_junction',
+        name: 'Tirunelveli Railway Junction',
+        lat: 8.7139,
+        lng: 77.7567,
+        type: 'railway',
+    },
+    {
+        id: 'vellore_busstand',
+        name: 'Vellore Central Bus Stand',
+        lat: 12.9165,
+        lng: 79.1325,
+        type: 'bus',
+    },
+    {
+        id: 'erode_bus_terminal',
+        name: 'Erode Central Bus Terminal',
+        lat: 11.3410,
+        lng: 77.7172,
+        type: 'bus',
+    },
+];
